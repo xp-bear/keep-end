@@ -1,6 +1,6 @@
 const Router = require("koa-router");
 
-const { create, untilTen } = require("../controller/account.controller");
+const { create, untilTen, addComment } = require("../controller/account.controller");
 
 // 前缀
 const accountRouter = new Router({
@@ -10,5 +10,7 @@ const accountRouter = new Router({
 // 控制器函数
 accountRouter.get("/", create);
 accountRouter.get("/everyday", untilTen);
+
+accountRouter.post("/add", addComment); //添加数据
 
 module.exports = accountRouter;
