@@ -36,12 +36,12 @@ class AccountController {
 
   // 添加数据
   async addComment(ctx, next) {
-    console.log(ctx.request.body);
-    let { value, date, currentTime, message, incomeState, tag_index } = ctx.request.body;
-    message = message == "" ? "暂无备注与留言啦!" : message;
-    let sql = `insert into record(money,date,time,comment,tag,income_state) values('${value}', '${date}', '${currentTime}', '${message}', ${tag_index}, ${incomeState});`;
+    let { record_state, record_tag, record_create_time, record_comment, record_money, record_date, record_time } = ctx.request.body;
+    record_comment = record_comment.length == 0 ? "暂无备注" : record_comment;
+    let sql = `insert into record(record_state, record_tag, record_create_time, record_comment, record_money, record_date, record_time) values(${record_state}, ${record_tag}, '${record_create_time}', '${record_comment}', ${record_money}, '${record_date}', '${record_time}');`;
+
     const [res] = await connection.execute(sql);
-    console.log(res);
+
     ctx.body = res;
   }
 }
