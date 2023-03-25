@@ -75,31 +75,22 @@ let createTable = (sql) => {
 };
 // 建表sql语句
 // files表
-let files_sql = `create table if not exists files(
-  file_id INT NOT NULL AUTO_INCREMENT,  
-  file_upload_time VARCHAR(100) NOT NULL COMMENT '上传时间',
-  file_type INT NOT NULL COMMENT '文件类型 0-图片  1-视频  2-txt文件 3-doc文件 4-pdf文件 5-ppt文件 6-表格文件 7-压缩文件 8-未知文件',
-  file_link VARCHAR(1000) NOT NULL COMMENT '上传地址链接',
-  file_suffix VARCHAR(50) NOT NULL COMMENT '后缀名',
-  file_name VARCHAR(1000) NOT NULL COMMENT '文件名',
-  file_size VARCHAR(100) NOT NULL COMMENT '文件大小',
-  file_region VARCHAR(100) NOT NULL COMMENT '文件存储区域',
-  file_user_id INT NOT NULL COMMENT '所属者上传id',
-  file_user_name VARCHAR(100) NOT NULL COMMENT '所属者上传昵称',
-  file_remark VARCHAR(1000)  COMMENT '上传文件备注',
-  file_address VARCHAR(100)  COMMENT '图片上传地址位置',
-  file_view INT NOT NULL  COMMENT '文件浏览量',
-  PRIMARY KEY(file_id)
+let record_sql = `create table if not exists record(
+  record_id INT NOT NULL  AUTO_INCREMENT,  
+  record_state INT NOT NULL COMMENT '0-支出 1-收入',
+  record_tag INT NOT NULL COMMENT '收消标签 0-服饰鞋帽 1-交通出行 2-食物小吃 3-学习提升...',
+  record_create_time date NOT NULL COMMENT '收消创建时间 2023/12/2',
+  record_comment VARCHAR(500) DEFAULT '暂无备注' COMMENT '收消备注',
+  record_money DECIMAL(10, 2) NOT NULL COMMENT '收消金额',
+  record_date VARCHAR(100) NOT NULL COMMENT '收消所属日期 2023/03',
+  record_time time NOT NULL COMMENT '收消时间',
+  PRIMARY KEY(record_id)
 )`;
 
 //先创建数据库再创建表
 async function create() {
   await createDatabase(createDB);
-  await createTable(files_sql);
-  //   await createTable(users_sql);
-  //   await createTable(likes_sql);
-  //   await createTable(feedbacks_sql);
-  //   await createTable(collects_sql);
+  await createTable(record_sql);
 }
 create();
 // ------------------------------------------
