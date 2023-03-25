@@ -1,15 +1,6 @@
 const connection = require("../app/database");
 
 class AccountController {
-  // 首页请求数据
-  async create(ctx, next) {
-    // 执行SQL语句
-    let sql = "select * from record limit 0,10;";
-    const [res] = await connection.execute(sql);
-    // console.log(result);
-    ctx.body = res;
-  }
-
   // 查询当前日期
   async searchDay(ctx, next) {
     // console.log(ctx.query);
@@ -42,6 +33,15 @@ class AccountController {
 
     const [res] = await connection.execute(sql);
 
+    ctx.body = res;
+  }
+
+  // 删除数据
+  async deleteComment(ctx, next) {
+    // 根据ID删除数据。
+    let { record_id } = ctx.request.body;
+    let sql = `DELETE FROM record WHERE record_id=${record_id};`;
+    const [res] = await connection.execute(sql);
     ctx.body = res;
   }
 }
