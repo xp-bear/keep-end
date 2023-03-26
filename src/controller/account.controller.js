@@ -25,6 +25,39 @@ class AccountController {
     ctx.body = obj;
   }
 
+  // 查询饼图数据
+  async searchPie(ctx, next) {
+    let date = ctx.query.monthdata; //2023/12 月份数据
+    let flagState = +ctx.query.flag; //收入与支出状态 0-支出 1-收入
+
+    let sql = `SELECT * FROM record WHERE record_state=${flagState} and record_date='${date}';`;
+    const [res] = await connection.execute(sql);
+
+    // 把结果统计成一个对象
+    let obj = {};
+    res.filter((item, index) => {
+      obj[item.record_tag] ? (obj[item.record_tag] = obj[item.record_tag] + +item.record_money) : (obj[item.record_tag] = +item.record_money);
+    });
+
+    // 把对象处理成指定的格式,然后返回
+    let result = [];
+    let tags = null;
+    if (flagState == 0) {
+      tags = ["服饰鞋帽", "交通出行", "食物小吃", "学习提升", "外出旅行", "娱乐消费", "其他项目"]; //支出饼图图标
+    } else {
+      tags = ["工资薪金", "劳务报酬", "偶然所得", "企业红利", "其他项目"]; //收入饼图图标
+    }
+
+    for (let key in obj) {
+      result.push({
+        name: tags[key],
+        value: obj[key] == true ? 0 : obj[key],
+      });
+    }
+
+    ctx.body = result;
+  }
+
   // 添加数据
   async addComment(ctx, next) {
     let { record_state, record_tag, record_create_time, record_comment, record_money, record_date, record_time } = ctx.request.body;
