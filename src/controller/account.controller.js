@@ -35,9 +35,17 @@ class AccountController {
 
     // 把结果统计成一个对象
     let obj = {};
+    let totalMoney = null; //所有数据总金额
     res.filter((item, index) => {
-      obj[item.record_tag] ? (obj[item.record_tag] = obj[item.record_tag] + +item.record_money) : (obj[item.record_tag] = +item.record_money);
+      if (obj[item.record_tag]) {
+        obj[item.record_tag] = obj[item.record_tag] + +item.record_money;
+      } else {
+        obj[item.record_tag] = +item.record_money;
+      }
+      totalMoney += +item.record_money;
+      // obj[item.record_tag] ? (obj[item.record_tag] = obj[item.record_tag] + +item.record_money) : (obj[item.record_tag] = +item.record_money);
     });
+    // console.log("总金额:", totalMoney);
 
     // 把对象处理成指定的格式,然后返回
     let result = [];
@@ -47,10 +55,10 @@ class AccountController {
     } else {
       tags = ["工资薪金", "劳务报酬", "偶然所得", "企业红利", "其他项目"]; //收入饼图图标
     }
-
+    // console.log(obj);
     for (let key in obj) {
       result.push({
-        name: tags[key],
+        name: obj[key] == true ? "" : tags[key] + ((obj[key] / totalMoney) * 100).toFixed(0) + "%",
         value: obj[key] == true ? 0 : obj[key],
       });
     }
