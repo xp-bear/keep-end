@@ -59,7 +59,7 @@ class AccountController {
     for (let key in obj) {
       result.push({
         name: obj[key] == true ? "" : tags[key] + Math.ceil((obj[key] / totalMoney) * 100) + "%",
-        value: obj[key] == true ? 0 : obj[key],
+        value: obj[key] == true ? 0 : Math.round(obj[key] * 100) / 100,
       });
     }
 
