@@ -1,6 +1,6 @@
 const Router = require("koa-router");
 
-const { searchPie, deleteComment, searchDay, addComment, searchMonth } = require("../controller/account.controller");
+const { searchYear, searchTotalDay, searchUser, searchPie, deleteComment, searchDay, addComment, searchMonth } = require("../controller/account.controller");
 
 // 前缀
 const accountRouter = new Router({
@@ -11,6 +11,9 @@ const accountRouter = new Router({
 accountRouter.get("/searchday", searchDay); //按日期查询
 accountRouter.get("/searchmonth", searchMonth); //按月份查询
 accountRouter.get("/searchpie", searchPie); // 饼图数据接口请求。
+accountRouter.get("/searchuser", searchUser); // 用户界面数据接口请求。
+accountRouter.get("/searchtotalday", searchTotalDay); // 用户记录天数 数据接口请求。
+accountRouter.get("/searchyear", searchYear); // 请求每年的数据
 
 accountRouter.post("/add", addComment); //添加数据
 

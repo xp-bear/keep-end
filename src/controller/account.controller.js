@@ -53,7 +53,7 @@ class AccountController {
     if (flagState == 0) {
       tags = ["服饰鞋帽", "交通出行", "食物小吃", "学习提升", "外出旅行", "娱乐消费", "其他项目"]; //支出饼图图标
     } else {
-      tags = ["工资薪金", "劳务报酬", "偶然所得", "企业红利", "其他项目"]; //收入饼图图标
+      tags = ["工资薪金", "奖金提成", "偶然所得", "投资收益", "劳务报酬", "其他项目"]; //收入饼图图标
     }
     // console.log(obj);
     for (let key in obj) {
@@ -66,6 +66,28 @@ class AccountController {
     ctx.body = result;
   }
 
+  // 查询用户界面数据
+  async searchUser(ctx, next) {
+    let sql = `select sum(record_money) as totalMoney,count(*) as totalCount from record;`;
+    const [res] = await connection.execute(sql);
+    ctx.body = res;
+  }
+  // 查询用户天数
+  async searchTotalDay(ctx, next) {
+    let sql = `select COUNT(DISTINCT  record_create_time) as totalDay from record;`;
+    const [res] = await connection.execute(sql);
+    ctx.body = res[0];
+  }
+
+  // 按年份查询数据
+  async searchYear(ctx, next) {
+    let year = ctx.query.year; //2023年
+    let flagState = +ctx.query.flag; //收入与支出状态 0-支出 1-收入
+
+    let sql = `select sum(record_money) as total_money from record where record_state=${flagState} and  year(record_create_time)=${year};`;
+    const [res] = await connection.execute(sql);
+    ctx.body = res;
+  }
   // 添加数据
   async addComment(ctx, next) {
     let { record_state, record_tag, record_create_time, record_comment, record_money, record_date, record_time } = ctx.request.body;
