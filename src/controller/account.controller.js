@@ -58,7 +58,7 @@ class AccountController {
     // console.log(obj);
     for (let key in obj) {
       result.push({
-        name: obj[key] == true ? "" : tags[key] + ((obj[key] / totalMoney) * 100).toFixed(0) + "%",
+        name: obj[key] == true ? "" : tags[key] + Math.ceil((obj[key] / totalMoney) * 100) + "%",
         value: obj[key] == true ? 0 : obj[key],
       });
     }
