@@ -15,8 +15,13 @@ class AccountController {
   async searchMonth(ctx, next) {
     let date = ctx.query.monthdata; //2023/12 月份数据
     let flagState = +ctx.query.flag; //收入与支出状态 0-支出 1-收入
-
-    let sql = `SELECT * FROM record WHERE record_state=${flagState} and record_date='${date}' order by record_create_time , record_time asc;`;
+    let tag = ctx.query.tag; //按标签查询的类别
+    let sql = null;
+    if (tag) {
+      sql = `SELECT * FROM record WHERE record_state=${flagState} and record_date='${date}' and record_tag=${tag} order by record_create_time , record_time asc;`;
+    } else {
+      sql = `SELECT * FROM record WHERE record_state=${flagState} and record_date='${date}'  order by record_create_time , record_time asc;`;
+    }
     const [res] = await connection.execute(sql);
     let obj = {};
     res.filter((item, index) => {
