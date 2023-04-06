@@ -99,6 +99,19 @@ class AccountController {
     ctx.body = res;
   }
 
+  // 修改数据
+  async updateData(ctx, next) {
+    try {
+      // 根据ID和类型进行判断 是收入还是支出
+      let { record_state, record_id, record_comment, record_money, record_tag } = ctx.request.body;
+      let sql = `update record set record_comment="${record_comment}",record_money=${record_money},record_tag=${record_tag} where record_state=${record_state} and record_id=${record_id};`;
+      const [res] = await connection.execute(sql);
+      ctx.body = res;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   // 删除数据
   async deleteComment(ctx, next) {
     // 根据ID删除数据。
