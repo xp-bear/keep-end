@@ -6,8 +6,9 @@ class AccountController {
     // console.log(ctx.query);
     let date = ctx.query.date; //2023/12/2 查询日期
     let flagState = +ctx.query.flag; //收入与支出状态 0-支出 1-收入
-
-    let sql = `SELECT * FROM record WHERE record_state=${flagState} and record_create_time='${date}' order by record_time asc;`;
+    let ownerId = +ctx.query.ownerid || -1;
+    // console.log(ownerId);
+    let sql = `SELECT * FROM record WHERE owner_id=${ownerId} and record_state=${flagState} and record_create_time='${date}' order by record_time asc;`;
     const [res] = await connection.execute(sql);
     ctx.body = res;
   }
@@ -16,11 +17,12 @@ class AccountController {
     let date = ctx.query.monthdata; //2023/12 月份数据
     let flagState = +ctx.query.flag; //收入与支出状态 0-支出 1-收入
     let tag = ctx.query.tag; //按标签查询的类别
+    let ownerId = +ctx.query.ownerid;
     let sql = null;
     if (tag) {
-      sql = `SELECT * FROM record WHERE record_state=${flagState} and record_date='${date}' and record_tag=${tag} order by record_create_time , record_time asc;`;
+      sql = `SELECT * FROM record WHERE owner_id=${ownerId} and record_state=${flagState} and record_date='${date}' and record_tag=${tag} order by record_create_time , record_time asc;`;
     } else {
-      sql = `SELECT * FROM record WHERE record_state=${flagState} and record_date='${date}'  order by record_create_time , record_time asc;`;
+      sql = `SELECT * FROM record WHERE owner_id=${ownerId} and record_state=${flagState} and record_date='${date}'  order by record_create_time , record_time asc;`;
     }
     const [res] = await connection.execute(sql);
     let obj = {};
@@ -34,8 +36,9 @@ class AccountController {
   async searchPie(ctx, next) {
     let date = ctx.query.monthdata; //2023/12 月份数据
     let flagState = +ctx.query.flag; //收入与支出状态 0-支出 1-收入
+    let ownerId = +ctx.query.ownerid;
 
-    let sql = `SELECT * FROM record WHERE record_state=${flagState} and record_date='${date}';`;
+    let sql = `SELECT * FROM record WHERE owner_id=${ownerId} and record_state=${flagState} and record_date='${date}';`;
     const [res] = await connection.execute(sql);
 
     // 把结果统计成一个对象
@@ -73,13 +76,15 @@ class AccountController {
 
   // 查询用户界面数据
   async searchUser(ctx, next) {
-    let sql = `select sum(record_money) as totalMoney,count(*) as totalCount from record;`;
+    let ownerId = +ctx.query.ownerid;
+    let sql = `select sum(record_money) as totalMoney,count(*) as totalCount from record where owner_id=${ownerId};`;
     const [res] = await connection.execute(sql);
     ctx.body = res;
   }
   // 查询用户天数
   async searchTotalDay(ctx, next) {
-    let sql = `select COUNT(DISTINCT  record_create_time) as totalDay from record;`;
+    let ownerId = +ctx.query.ownerid;
+    let sql = `select COUNT(DISTINCT  record_create_time) as totalDay from record where owner_id=${ownerId};`;
     const [res] = await connection.execute(sql);
     ctx.body = res[0];
   }
@@ -88,20 +93,26 @@ class AccountController {
   async searchYear(ctx, next) {
     let year = ctx.query.year; //2023年
     let flagState = +ctx.query.flag; //收入与支出状态 0-支出 1-收入
+    let ownerId = +ctx.query.ownerid;
 
-    let sql = `select sum(record_money) as total_money from record where record_state=${flagState} and  year(record_create_time)=${year};`;
+    let sql = `select sum(record_money) as total_money from record where owner_id=${ownerId} and record_state=${flagState} and  year(record_create_time)=${year};`;
     const [res] = await connection.execute(sql);
     ctx.body = res;
   }
   // 添加数据
   async addComment(ctx, next) {
-    let { record_state, record_tag, record_create_time, record_comment, record_money, record_date, record_time } = ctx.request.body;
-    record_comment = record_comment.length == 0 ? "暂无备注" : record_comment;
-    let sql = `insert into record(record_state, record_tag, record_create_time, record_comment, record_money, record_date, record_time) values(${record_state}, ${record_tag}, '${record_create_time}', '${record_comment}', ${record_money}, '${record_date}', '${record_time}');`;
+    try {
+      let { owner_id, record_state, record_tag, record_create_time, record_comment, record_money, record_date, record_time } = ctx.request.body;
+      // console.log("添加数据。", owner_id);
+      record_comment = record_comment.length == 0 ? "暂无备注" : record_comment;
+      let sql = `insert into record(record_state, record_tag, record_create_time, record_comment, record_money, record_date, record_time, owner_id) values(${record_state}, ${record_tag}, '${record_create_time}', '${record_comment}', ${record_money}, '${record_date}', '${record_time}',${owner_id});`;
 
-    const [res] = await connection.execute(sql);
+      const [res] = await connection.execute(sql);
 
-    ctx.body = res;
+      ctx.body = res;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   // 修改数据

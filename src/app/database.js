@@ -74,7 +74,7 @@ let createTable = (sql) => {
   return query(sql, []);
 };
 // 建表sql语句
-// files表
+// record表 ,每一条数据的记录。
 let record_sql = `create table if not exists record(
   record_id INT NOT NULL  AUTO_INCREMENT,  
   record_state INT NOT NULL COMMENT '0-支出 1-收入',
@@ -84,13 +84,25 @@ let record_sql = `create table if not exists record(
   record_money DECIMAL(10, 2) NOT NULL COMMENT '收消金额',
   record_date VARCHAR(100) NOT NULL COMMENT '收消所属日期 2023/03',
   record_time time NOT NULL COMMENT '收消时间',
-  PRIMARY KEY(record_id)
+  owner_id INT NOT NULL DEFAULT -1  COMMENT '该条数据属于哪个用户',
+  PRIMARY KEY(record_id) 
 )`;
 
+let user_sql = `create table if not exists user(
+  user_id INT NOT NULL  AUTO_INCREMENT,  
+  username VARCHAR(50) NOT NULL COMMENT '用户名',
+  password VARCHAR(50) NOT NULL COMMENT '密码',  
+  email VARCHAR(50) NOT NULL COMMENT '邮箱',
+  create_time datetime NOT NULL COMMENT '用户创建时间',
+  sex INT NOT NULL DEFAULT 0  COMMENT '0-男 1-女',
+  avatar VARCHAR(100) DEFAULT 'http://cdn.xxoutman.cn/zhihu2-1682135991819.jpeg'  COMMENT '头像地址',
+  PRIMARY KEY(user_id)
+)`;
 //先创建数据库再创建表
 async function create() {
   await createDatabase(createDB);
   await createTable(record_sql);
+  await createTable(user_sql);
 }
 create();
 // ------------------------------------------
