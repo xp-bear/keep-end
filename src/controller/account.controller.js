@@ -119,8 +119,23 @@ class AccountController {
   async updateData(ctx, next) {
     try {
       // 根据ID和类型进行判断 是收入还是支出
-      let { record_state, record_id, record_comment, record_money, record_tag } = ctx.request.body;
-      let sql = `update record set record_comment="${record_comment}",record_money=${record_money},record_tag=${record_tag} where record_state=${record_state} and record_id=${record_id};`;
+      let { record_state, record_id, record_comment, record_money, record_tag, record_time } = ctx.request.body;
+
+      let sql =
+        "UPDATE `record` SET  `record_comment` = '" +
+        record_comment +
+        "', `record_money` = " +
+        record_money +
+        ", `record_tag` = " +
+        record_tag +
+        ", `record_time` = CONCAT(DATE(`record_time`), ' ', '" +
+        record_time +
+        "') WHERE  `record_state` = " +
+        record_state +
+        " AND  `record_id` = " +
+        record_id +
+        ";";
+
       const [res] = await connection.execute(sql);
       ctx.body = res;
     } catch (error) {
