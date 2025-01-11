@@ -95,7 +95,7 @@ let user_sql = `create table if not exists user(
   email VARCHAR(50) NOT NULL COMMENT '邮箱',
   create_time datetime NOT NULL COMMENT '用户创建时间',
   sex INT NOT NULL DEFAULT 0  COMMENT '0-男 1-女',
-  avatar VARCHAR(100) DEFAULT 'http://cdn.xxoutman.cn/zhihu2-1682135991819.jpeg'  COMMENT '头像地址',
+  avatar VARCHAR(100) DEFAULT 'https://xp-cdn-oss.oss-cn-wuhan-lr.aliyuncs.com/common/default_avatar.png'  COMMENT '头像地址',
   PRIMARY KEY(user_id)
 )`;
 //先创建数据库再创建表
